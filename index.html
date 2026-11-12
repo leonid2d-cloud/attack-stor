@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090910"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="ATTACK-STOR">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png"><title>ATTACK-STOR</title>
+<style>
+:root{color-scheme:dark;--bg:#090910;--panel:#171725;--line:#29283c;--purple:#812cff;--purple2:#b16cff;--muted:#9291a8;--white:#f8f7ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 calc(90px + env(safe-area-inset-bottom))}
+button,input{font:inherit}button{border:0;cursor:pointer;color:inherit}header{padding:22px 20px 14px;display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,#a14cff,#5d17d8);display:grid;place-items:center;font-size:30px;font-weight:900}
+h1{font-size:23px;margin:0}header small{color:var(--muted)}main{padding:10px 18px 24px;max-width:760px;margin:auto}
+.hero{padding:28px 24px 24px;border-radius:27px;background:linear-gradient(135deg,#28153f,#171323);margin:10px 0 28px}
+.hero h2{font-size:27px;margin:0 0 12px}.hero p{color:#aaa5bb;margin:0 0 22px}
+.search{width:100%;background:#171521;border:1px solid #302941;border-radius:17px;padding:17px;color:white;outline:none}.search:focus{border-color:var(--purple)}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:0 0 14px}h3{font-size:22px;margin:0}.muted,.count{color:var(--muted)}.count{margin:0 0 14px}
+.file-card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:16px;margin:12px 0}
+.file-top{display:flex;gap:13px;align-items:center;min-width:0}.file-icon{width:58px;height:58px;flex:none;border-radius:16px;background:#30203f;display:grid;place-items:center;font-size:27px}
+.file-info{min-width:0;flex:1}.file-info strong{display:block;font-size:18px;overflow-wrap:anywhere}.file-info small{display:block;color:var(--muted);margin-top:5px}
+.actions{display:flex;gap:8px;margin-top:15px}.action{flex:1;padding:13px 8px;border-radius:14px;background:#2a243a;font-weight:650;font-size:14px}.action.primary{background:var(--purple)}.action.danger{color:#ff9caa}
+.add{width:100%;padding:17px;border-radius:17px;background:linear-gradient(100deg,#8b2cff,#6420d5);font-size:16px;font-weight:750;margin-top:16px}
+.empty{text-align:center;color:var(--muted);padding:30px 12px;background:#12121b;border:1px dashed #353147;border-radius:18px}
+.tabs{position:fixed;bottom:0;left:0;right:0;padding:10px 8px calc(10px + env(safe-area-inset-bottom));background:#11111b;border-top:1px solid #29283a;display:flex;justify-content:space-around;z-index:5}
+.tab{background:none;color:#858399;display:grid;gap:4px;justify-items:center;font-size:12px;padding:4px 8px}.tab span:first-child{font-size:22px}.tab.active{color:var(--purple2);font-weight:700}
+.settings{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:17px;line-height:1.55;margin:12px 0}.notice{font-size:13px;color:var(--muted);line-height:1.5;margin-top:18px}
+.toast{position:fixed;left:16px;right:16px;bottom:100px;background:#2b1b42;border:1px solid #6235a1;padding:14px 16px;border-radius:15px;display:none;z-index:9}.hidden{display:none!important}
+@media(min-width:650px){main{padding-top:24px}.hero{padding:38px}.hero h2{font-size:32px}}
+</style></head>
+<body>
+<header><div class="logo">A</div><div><h1>ATTACK-STOR</h1><small>Your app library</small></div></header>
+<main>
+<section id="homeView"><div class="hero"><h2>Добро пожаловать!</h2><p>Твои приложения в одном месте.</p><input id="search" class="search" type="search" placeholder="⌕  Поиск приложений…" autocomplete="off"></div>
+<div class="section-head"><h3>Моя библиотека</h3></div><p class="count" id="count">Загрузка…</p><div id="homeList"></div><button class="add" id="addHome">＋ Добавить IPA-файл</button></section>
+<section id="catalogView" class="hidden"><div class="section-head"><h3>Каталог</h3></div><p class="count">Все файлы в библиотеке</p><div id="catalogList"></div><button class="add" id="addCatalog">＋ Добавить IPA-файл</button></section>
+<section id="downloadsView" class="hidden"><div class="section-head"><h3>Загрузки</h3></div><p class="count">Недавно добавленные файлы</p><div id="downloadsList"></div></section>
+<section id="settingsView" class="hidden"><div class="section-head"><h3>Настройки</h3></div>
+<div class="settings"><strong>Хранилище</strong><p id="storageInfo" class="muted">Проверяем место…</p></div>
+<div class="settings"><strong>Резервные копии</strong><p class="muted">Файлы хранятся локально в браузере на этом устройстве. Сохраняй важные IPA отдельно: браузерное хранилище может быть очищено системой.</p></div>
+<div class="settings"><strong>Установка iOS-приложений</strong><p class="muted">ATTACK-STOR хранит IPA, но не устанавливает неподписанные приложения. Для установки нужна действительная подпись и поддерживаемый Apple способ распространения.</p></div>
+<div class="settings"><strong>Версия</strong><p class="muted">ATTACK-STOR PWA 1.3</p></div></section>
+<input id="fileInput" type="file" accept=".ipa,application/octet-stream" multiple hidden>
+<p class="notice">Файлы остаются на этом устройстве и не отправляются на сервер. Не закрывай страницу во время добавления больших файлов.</p>
+</main>
+<nav class="tabs"><button class="tab active" data-tab="home"><span>⌂</span><span>Главная</span></button><button class="tab" data-tab="catalog"><span>▦</span><span>Каталог</span></button><button class="tab" data-tab="downloads"><span>↓</span><span>Загрузки</span></button><button class="tab" data-tab="settings"><span>⚙</span><span>Настройки</span></button></nav>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(()=>{'use strict';
+const DB='attack-stor-db',STORE='apps';let db;
+const $=id=>document.getElementById(id),input=$('fileInput');
+function toast(s){let t=$('toast');t.textContent=s;t.style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.style.display='none',3000)}
+function id(){return crypto?.randomUUID?.()||Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)}
+function openDB(){return new Promise((ok,no)=>{let r=indexedDB.open(DB,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(STORE))r.result.createObjectStore(STORE,{keyPath:'id'})};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+function req(r){return new Promise((ok,no)=>{r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+const all=()=>req(db.transaction(STORE,'readonly').objectStore(STORE).getAll());
+const save=x=>req(db.transaction(STORE,'readwrite').objectStore(STORE).put(x));
+const del=x=>req(db.transaction(STORE,'readwrite').objectStore(STORE).delete(x));
+function size(n){return n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(2)+' MB'}
+function plural(n){let a=n%10,b=n%100;return a===1&&b!==11?'приложение':a>=2&&a<=4&&(b<12||b>14)?'приложения':'приложений'}
+function card(f){let e=document.createElement('article');e.className='file-card';let top=document.createElement('div');top.className='file-top';let ico=document.createElement('div');ico.className='file-icon';ico.textContent='📱';let info=document.createElement('div');info.className='file-info';let name=document.createElement('strong');name.textContent=f.name;let meta=document.createElement('small');meta.textContent=size(f.size)+' · '+new Date(f.date).toLocaleDateString('ru-RU');info.append(name,meta);top.append(ico,info);e.append(top);
+let acts=document.createElement('div');acts.className='actions';
+let d=document.createElement('button');d.className='action primary';d.textContent='Скачать';d.onclick=()=>download(f);
+let s=document.createElement('button');s.className='action';s.textContent='Поделиться';s.onclick=()=>share(f);
+let x=document.createElement('button');x.className='action danger';x.textContent='Удалить';x.onclick=async()=>{if(confirm('Удалить '+f.name+'?')){await del(f.id);await render();toast('Файл удалён')}};
+acts.append(d,s,x);e.append(acts);return e}
+function list(target,items){target.replaceChildren();if(!items.length){let e=document.createElement('div');e.className='empty';e.textContent='Пока пусто. Добавь IPA-файл, чтобы он появился здесь.';target.append(e)}else items.forEach(f=>target.append(card(f)))}
+async function storage(){if(navigator.storage?.estimate){let s=await navigator.storage.estimate();$('storageInfo').textContent=(s.usage?size(s.usage):'0 KB')+' использовано из '+(s.quota?size(s.quota):'неизвестного объёма')}else $('storageInfo').textContent='Данные о хранилище недоступны'}
+async function render(){let files=(await all()).sort((a,b)=>b.date-a.date),q=$('search').value.trim().toLowerCase(),filtered=files.filter(f=>f.name.toLowerCase().includes(q));$('count').textContent=files.length+' '+plural(files.length);list($('homeList'),filtered);list($('catalogList'),filtered);list($('downloadsList'),filtered.slice(0,20));storage()}
+async function importFiles(fs){let n=0;for(let f of Array.from(fs||[])){if(!f.name.toLowerCase().endsWith('.ipa')){toast('Пропущен файл: нужен формат .ipa');continue}try{await save({id:id(),name:f.name,size:f.size,date:Date.now(),blob:f});n++}catch(e){toast('Не удалось сохранить файл: возможно, не хватает места');break}}input.value='';await render();if(n)toast('Добавлено: '+n+' '+plural(n))}
+function download(f){let u=URL.createObjectURL(f.blob),a=document.createElement('a');a.href=u;a.download=f.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),120000);toast('Подготовлен файл: '+f.name)}
+async function share(f){try{let file=new File([f.blob],f.name,{type:'application/octet-stream'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]})))await navigator.share({files:[file],title:f.name});else download(f)}catch(e){if(e.name!=='AbortError')toast('Не удалось поделиться — попробуй «Скачать»')}}
+function tab(t){['home','catalog','downloads','settings'].forEach(x=>$(x+'View').classList.toggle('hidden',x!==t));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));if(t==='settings')storage()}
+$('addHome').onclick=$('addCatalog').onclick=()=>input.click();input.onchange=()=>importFiles(input.files);$('search').oninput=render;document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+(async()=>{try{db=await openDB();await render();if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{})}catch(e){toast('Не удалось открыть хранилище. Открой сайт по HTTPS в Safari.')}})();
+})();
+</script></body></html>
